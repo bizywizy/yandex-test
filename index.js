@@ -15,10 +15,10 @@ class MyForm {
             for (let i = 0; i < phone.length; i++) {
                 let num = Number(phone.charAt(i));
                 if (!Number.isNaN(num)) {
-                    numbers.push(num)
+                    numbers.push(num);
                 }
             }
-            return numbers.reduce((x, y) => x + y, 0) <= 30
+            return numbers.reduce((x, y) => x + y, 0) <= 30;
         };
         if (!data.fio || data.fio.split(' ').length !== 3) {
             errorFields.push('fio');
@@ -31,7 +31,7 @@ class MyForm {
         if (!data.phone || data.phone.search(regex) === -1 || !isValidPhone(data.phone)) {
             errorFields.push('phone');
         }
-        return {isValid: errorFields.length === 0, errorFields: errorFields}
+        return {isValid: errorFields.length === 0, errorFields: errorFields};
     }
 
     getData() {
@@ -61,9 +61,9 @@ class MyForm {
         let inputs = this.form.querySelectorAll('input');
         for (let input of inputs) {
             if (valid.errorFields.includes(input.name)) {
-                input.classList.add('error')
+                input.classList.add('error');
             } else {
-                input.classList.remove('error')
+                input.classList.remove('error');
             }
         }
         if (!valid.isValid) {
@@ -73,11 +73,12 @@ class MyForm {
         let answers = ['success.json', 'progress.json', 'error.json'];
         let url = answers[Math.floor(Math.random() * answers.length)];
         let resultContainer = document.getElementById('resultContainer');
+        resultContainer.classList.remove('success', 'progress', 'error');
         let xhr = new XMLHttpRequest();
-        xhr.open('POST', 'progress.json');
+        xhr.open('POST', url);
         xhr.send(JSON.stringify(data));
         xhr.onreadystatechange = () => {
-            if (xhr.readyState !== 4) return;
+            if (xhr.readyState !== 4){ return; }
             if (xhr.status === 200) {
                 let response = JSON.parse(xhr.responseText);
                 switch (response.status) {
