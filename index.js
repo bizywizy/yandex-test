@@ -20,15 +20,15 @@ class MyForm {
             }
             return numbers.reduce((x, y) => x + y, 0) <= 30;
         };
-        if (!data.fio || data.fio.split(' ').length !== 3) {
+        if (!data.fio || data.fio.trim().split(' ').length !== 3) {
             errorFields.push('fio');
         }
         let regex = '^[a-zA-Z0-9._-]+@(ya.ru|yandex.ru|yandex.ua|yandex.by|yandex.kz|yandex.com)$';
-        if (!data.email || data.email.search(regex) === -1) {
+        if (!data.email || data.email.trim().search(regex) === -1) {
             errorFields.push('email');
         }
         regex = '^\\+7\\(\\d{3}\\)\\d{3}\\-\\d{2}\\-\\d{2}$';
-        if (!data.phone || data.phone.search(regex) === -1 || !isValidPhone(data.phone)) {
+        if (!data.phone || data.phone.trim().search(regex) === -1 || !isValidPhone(data.phone)) {
             errorFields.push('phone');
         }
         return {isValid: errorFields.length === 0, errorFields: errorFields};
@@ -38,7 +38,7 @@ class MyForm {
         let data = {};
         for (let i = 0; i < this.inputs.length; i++) {
             let name = this.inputs[i].getAttribute('name');
-            data[name] = this.inputs[i].value;
+            data[name] = this.inputs[i].value.trim();
         }
         return data;
     }
@@ -69,30 +69,39 @@ class MyForm {
         if (!valid.isValid) {
             return;
         }
+        document.getElementById('submitButton').disabled = true;
         let data = this.getData();
-        let answers = ['success.json', 'progress.json', 'error.json'];
-        let url = answers[Math.floor(Math.random() * answers.length)];
         let resultContainer = document.getElementById('resultContainer');
         resultContainer.classList.remove('success', 'progress', 'error');
         let xhr = new XMLHttpRequest();
-        xhr.open('POST', url);
+        xhr.open('POST', this.form.action);
         xhr.send(JSON.stringify(data));
         xhr.onreadystatechange = () => {
-            if (xhr.readyState !== 4){ return; }
+            if (xhr.readyState !== 4) {
+                return;
+            }
+            let answers = ['success.json', 'progress.json', 'error.json'];
+            this.form.action = answers[Math.floor(Math.random() * answers.length)];
             if (xhr.status === 200) {
                 let response = JSON.parse(xhr.responseText);
                 switch (response.status) {
                     case 'success':
+                        document.getElementById('submitButton').disabled = false;
+
                         resultContainer.classList.add('success');
                         resultContainer.innerText = 'Success';
                         break;
                     case 'error':
+                        document.getElementById('submitButton').disabled = false;
+
                         resultContainer.classList.add('error');
                         resultContainer.innerText = response.reason;
                         break;
                     case 'progress':
                         resultContainer.classList.add('progress');
-                        return () => setTimeout(this.submit, response.timeout);
+                        resultContainer.innerText = '';
+                        setTimeout(() => this.submit(), response.timeout);
+                        break;
                 }
             }
 
