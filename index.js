@@ -12,8 +12,8 @@ class MyForm {
 
         let isValidPhone = function (phone) {
             let numbers = [];
-            for (let i = 0; i < phone.length; i++) {
-                let num = Number(phone.charAt(i));
+            for (let ch of phone) {
+                let num = Number(ch);
                 if (!Number.isNaN(num)) {
                     numbers.push(num);
                 }
@@ -36,21 +36,21 @@ class MyForm {
 
     getData() {
         let data = {};
-        for (let i = 0; i < this.inputs.length; i++) {
-            let name = this.inputs[i].getAttribute('name');
-            data[name] = this.inputs[i].value.trim();
+        for (let input of this.inputs) {
+            let name = input.getAttribute('name');
+            data[name] = input.value.trim();
         }
         return data;
     }
 
     setData(data) {
         let fields = ['fio', 'email', 'phone'];
-        for (let i = 0; i < this.inputs.length; i++) {
-            let name = this.inputs[i].getAttribute('name');
+        for (let input of this.inputs) {
+            let name = input.getAttribute('name');
             if (fields.includes(name)) {
                 let value = data[name];
                 if (value) {
-                    this.inputs[i].setAttribute('value', value);
+                    input.value = value;
                 }
             }
         }
