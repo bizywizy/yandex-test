@@ -1,4 +1,5 @@
 "use strict";
+
 class MyForm {
 
     constructor(formId) {
@@ -69,7 +70,8 @@ class MyForm {
         if (!valid.isValid) {
             return;
         }
-        document.getElementById('submitButton').disabled = true;
+        let button = document.getElementById('submitButton');
+        button.disabled = true;
         let data = this.getData();
         let resultContainer = document.getElementById('resultContainer');
         resultContainer.classList.remove('success', 'progress', 'error');
@@ -86,14 +88,12 @@ class MyForm {
                 let response = JSON.parse(xhr.responseText);
                 switch (response.status) {
                     case 'success':
-                        document.getElementById('submitButton').disabled = false;
-
+                        button.disabled = false;
                         resultContainer.classList.add('success');
                         resultContainer.innerText = 'Success';
                         break;
                     case 'error':
-                        document.getElementById('submitButton').disabled = false;
-
+                        button.disabled = false;
                         resultContainer.classList.add('error');
                         resultContainer.innerText = response.reason;
                         break;
